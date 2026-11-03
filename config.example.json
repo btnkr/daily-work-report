@@ -1,5 +1,11 @@
 {
+  "output_dir": "~/daily-work-reports",
+  "style": "brief",
   "timezone": "Asia/Shanghai",
+  "sources": {},
   "project_roots": [],
-  "exclude_dirs": []
+  "repositories": [],
+  "exclude_dirs": [],
+  "project_names": {},
+  "author_emails": []
 }

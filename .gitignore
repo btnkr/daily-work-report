@@ -9,3 +9,4 @@ daily/
 _raw/
 _state/
 *.run.log
+scripts/*.zip

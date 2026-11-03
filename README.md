@@ -1,60 +1,110 @@
 # daily-work-report
 
-从本机 Codex、Claude Code 会话与 Git 活动，生成跨项目工作日报。会话还原做过的事，Git 核对提交；已有日报有更新时另存草稿，保留人工修改。
+**daily-work-report** 是一个面向 AI 编程工作流的开源 Skill。它读取本机 AI 编程会话和 Git 活动，由你正在使用的 Agent 生成跨项目工作日报。
 
-需要 Python 3.10+、Git 和支持 skill 的编码 Agent，无需安装 Python 第三方库或额外配置模型 Key。已在 Linux / WSL 验证，其他平台待验证。
+会话和 Git 证据在本机采集；日报由当前 Agent 生成。无需为这个 Skill 单独配置模型 Key。
+
+## 支持环境
+
+- Windows、macOS、Linux（含 WSL）
+- Python 3.10+
+- Git
+- Codex、Claude Code
+- Cursor IDE Composer
 
 ## 安装
 
-在终端执行：
+把 GitHub 地址交给正在使用的编码 Agent：
 
-```bash
-git clone https://github.com/btnkr/daily-work-report.git ~/.agents/skills/daily-work-report
+```text
+请从 https://github.com/btnkr/daily-work-report 安装 daily-work-report skill。
 ```
 
-这是 Codex 当前官方文档列出的用户级 skills 目录。也可以在 Codex 中让内置 `$skill-installer` 从本仓库安装根目录的 skill。Claude Code 则克隆到 `~/.claude/skills/daily-work-report`。
+安装时只需要将下面三个内容放入对应工具的 skills 目录：
+
+```text
+SKILL.md
+scripts/
+references/
+```
+
+常见用户级目录：
+
+- Codex：`~/.agents/skills/daily-work-report/`
+- Claude Code：`~/.claude/skills/daily-work-report/`
+- Cursor：`~/.cursor/skills/daily-work-report/`
+
+也可以下载仓库后手动复制。完整仓库包含源码和配置示例；日常使用只需要上面的三个运行内容。
 
 ## 使用
 
-在编码 Agent 的对话中输入：
+安装后，在 Agent 对话中说：
 
 ```text
 使用 daily-work-report 生成昨天的工作日报。
 ```
 
-默认写简短日报，保存在当前目录的 `daily-work-reports/`。可以指定日期、输出目录，或要求“详细复盘版”。首次使用无需配置。
+也可以指定日期、篇幅或本次输出位置：
 
-示例内容（虚构）：
-
-```markdown
-# 2026-10-20 工作日报
-
-- 订单筛选：完成两个项目的调整并提交，会话记录本地回归通过，待跨端联调。
-- 对账导出：确认字段与空值口径，形成实现方案。
-
-来源：Codex 2 条会话；本地证据 _raw/2026-10-20.json。
+```text
+生成 2026-10-20 的详细复盘版日报。
 ```
 
-默认只核对会话关联的仓库。需要额外扫描仓库、排除目录或修改时区时，见 [配置与命令](references/data-and-config.md)。
+日报正文会直接展示在对话中，并默认保存到：
 
-## 工具兼容
-
-自动采集历史记录目前仅支持 Codex 和 Claude Code。Cursor、Qoder 等工具即使能加载本 skill，也不会因此自动读取它们自己的历史；其日志适配仍待实现。统一工作记录导入是后续方向，当前版本尚未提供。
-
-Skill 加载方式可参考 [Cursor](https://cursor.com/docs/context/skills)、[Qoder](https://docs.qoder.com/extensions/skills.md) 各自文档。Windsurf、TRAE 的安装方式和历史采集也需要按具体版本验证。
-
-## 数据说明
-
-脚本只在本机采集和保存，正文由当前 Agent 生成；远程模型会通过该 Agent 接收所读素材。脚本会过滤系统注入并对部分常见凭证脱敏，分享日报前仍需检查正文。
-
-只统计可访问的文字会话和本地 Git，不代表完整工作记录。大量历史日志可能较慢，日志版本变化也可能影响解析；Claude Code 目前有合成日志测试，尚缺真实端到端验收。
-
-## 开发
-
-一个脚本负责采集与保存，`SKILL.md` 负责写作判断。回归测试使用合成日志和临时 Git 仓库：
-
-```bash
-python3 -m unittest discover -s tests -v
+```text
+~/daily-work-reports/
 ```
 
-MIT，见 [LICENSE](LICENSE)。安装路径依据 [OpenAI 官方 Skills 文档](https://developers.openai.com/codex/skills/)。
+已有日报需要更新时，先展示更新稿；只有你明确要求覆盖，才会替换原文。
+
+## 你可以配置什么
+
+长期偏好保存在：
+
+```text
+~/.config/daily-work-report/config.json
+```
+
+不需要手动编辑，可以直接告诉 Agent：
+
+```text
+以后日报保存到 ~/work-reports。
+这个项目叫订单后台。
+个人项目不要写进日报。
+以后默认写详细复盘。
+```
+
+常用配置包括：
+
+- `output_dir`：日报和采集证据的保存目录
+- `style`：`brief` 或 `detailed`
+- `timezone`：日报日期使用的时区
+- `sources`：Codex、Claude Code、Cursor 的会话数据目录
+- `repositories`：逐个维护的 Git 仓库路径
+- `project_roots`：自动扫描仓库的父目录
+- `exclude_dirs`：排除目录
+- `project_names`：项目展示名称
+- `author_emails`：Git 提交作者邮箱
+
+详细字段和平台路径见 [配置参考](references/data-and-config.md)。
+
+## 如何确定项目
+
+工具会合并三类信息：
+
+1. AI 会话记录中的工作目录；
+2. 当前工作区所属的 Git 仓库；
+3. 配置中的 `repositories` 和 `project_roots`。
+
+会话中的工作目录会通过 Git 根目录归属到项目；同一件事跨多个仓库时，日报可以合并叙述。无法确定归属的会话会单独保留，不强行归入某个项目。
+
+## 隐私
+
+会话和 Git 记录由脚本在本机读取。日报由你正在使用的 Agent 生成；如果 Agent 使用远程模型，整理后的素材会发送给对应服务商。
+
+工具会对部分常见凭证做脱敏，但分享日报前仍应检查内容。
+
+## 许可证
+
+[MIT](LICENSE)
