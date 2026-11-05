@@ -1,6 +1,6 @@
 # daily-work-report
 
-[![skills.sh](https://skills.sh/b/btnkr/daily-work-report)](https://skills.sh/btnkr/daily-work-report)
+[![skills.sh](https://www.skills.sh/b/btnkr/daily-work-report)](https://www.skills.sh/btnkr/daily-work-report)
 
 **daily-work-report** 是一个面向 AI 编程工作流的开源 Skill。它读取本机 AI 编程会话和 Git 活动，由你正在使用的 Agent 生成跨项目工作日报。
 
