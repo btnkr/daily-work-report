@@ -1,5 +1,7 @@
 # daily-work-report
 
+[![skills.sh](https://skills.sh/b/btnkr/daily-work-report)](https://skills.sh/btnkr/daily-work-report)
+
 **daily-work-report** 是一个面向 AI 编程工作流的开源 Skill。它读取本机 AI 编程会话和 Git 活动，由你正在使用的 Agent 生成跨项目工作日报。
 
 会话和 Git 证据在本机采集；日报由当前 Agent 生成。无需为这个 Skill 单独配置模型 Key。
@@ -14,7 +16,13 @@
 
 ## 安装
 
-把 GitHub 地址交给正在使用的编码 Agent：
+通过 [Skills CLI](https://skills.sh/docs) 安装到用户目录，按提示选择使用的 Agent，即可跨项目使用：
+
+```bash
+npx skills add btnkr/daily-work-report -g
+```
+
+此安装方式需要 Node.js 22.20+。也可以把 GitHub 地址交给正在使用的编码 Agent：
 
 ```text
 请从 https://github.com/btnkr/daily-work-report 安装 daily-work-report skill。
@@ -35,6 +43,12 @@ references/
 - Cursor：`~/.cursor/skills/daily-work-report/`
 
 也可以下载仓库后手动复制。完整仓库包含源码和配置示例；日常使用只需要上面的三个运行内容。
+
+通过 Skills CLI 安装后，可运行以下命令更新：
+
+```bash
+npx skills update daily-work-report -g
+```
 
 ## 使用
 
